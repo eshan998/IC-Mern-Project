@@ -1,0 +1,44 @@
+name: CICD Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+jobs:
+  Linter_Check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: eslint
+        uses: stefanoeb/eslint-action@1.0.2
+        with:
+          files: client/
+      # - name: checkstyle
+      #   uses: nikitasavinov/checkstyle-action@master
+      #   with:
+      #     github_token: ${{ secrets.G_token }}
+      #     reporter: 'github-pr-check'
+      #     tool_name: 'testtool'
+  # CodeScan_with_Sonar_and_Trivy:
+  #   # name: SonarCloud and Trivy Scan (if set then job name will be this)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0  #  Shallow clones should be disabled for a better relevancy of analysis
+  #     - name: SonarCloud Scan
+  #       uses: SonarSource/sonarcloud-github-action@master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     - name: File Scan with Trivy
+  #       run: |
+  #         sudo apt-get install wget apt-transport-https gnupg lsb-release
+  #         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+  #         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+  #         sudo apt-get update
+  #         sudo apt-get install trivy
+  #         #scanning files
+  #         trivy fs .
